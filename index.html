@@ -1,0 +1,294 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>vim-flavor by kana</title>
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script src="javascripts/respond.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <!--[if lt IE 8]>
+    <link rel="stylesheet" href="stylesheets/ie.css">
+    <![endif]-->
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+  </head>
+  <body>
+
+      <div id="header">
+        <nav>
+          <li class="fork"><a href="https://github.com/kana/vim-flavor">Fork On GitHub</a></li>
+          <li class="downloads"><a href="https://github.com/kana/vim-flavor/zipball/master">ZIP</a></li>
+          <li class="downloads"><a href="https://github.com/kana/vim-flavor/tarball/master">TAR</a></li>
+          <li class="title">DOWNLOADS</li>
+        </nav>
+      </div><!-- end header -->
+
+    <div class="wrapper">
+
+      <section>
+        <div id="title">
+          <h1>vim-flavor</h1>
+          <p>Taste the difference.</p>
+          <hr>
+          <span class="credits left">Project maintained by <a href="https://github.com/kana">kana</a></span>
+          <span class="credits right">Hosted on GitHub Pages &mdash; Theme by <a href="http://twitter.com/#!/michigangraham">mattgraham</a></span>
+        </div>
+
+        <h1>vim-flavor, a tool to manage your favorite Vim plugins</h1>
+
+<h2>Set up the tool for a new-style plugin management</h2>
+
+<h3>Requirements</h3>
+
+<ul>
+<li>
+<a href="http://git-scm.com/">Git</a> 1.7.9 or later</li>
+<li>
+<a href="http://www.ruby-lang.org/">Ruby</a> 1.9.2 or later
+
+<ul>
+<li>Recommendation: Use <a href="http://beginrescueend.com/">RVM</a> or other tools
+for ease of installation across different envinronments.</li>
+</ul>
+</li>
+<li>
+<a href="http://www.vim.org/">Vim</a> 7.3 or later
+
+<ul>
+<li>Note that Vim should be compiled as normal, big or huge version
+to use most of plugins.</li>
+</ul>
+</li>
+</ul><h3>Supported platforms</h3>
+
+<ul>
+<li>Unix-like environments such as Linux, Mac OS X, etc.</li>
+<li>Though Microsoft Windows is not directly supported,
+it is possible to manage Vim plugins via Cygwin or other environments.</li>
+</ul><h3>Installation steps</h3>
+
+<pre><code>gem install vim-flavor
+</code></pre>
+
+<h3>Installable plugins</h3>
+
+<p>Not all Vim plugins can be installed with vim-flavor.
+vim-flavor can install plugins which meet the following conditions:</p>
+
+<ul>
+<li>Plugins must have dedicated Git repositories.
+vim-flavor does not support other version control systems.
+This is an intentional design.  Because:
+
+<ul>
+<li>
+<a href="http://vim-scripts.org/">vim-scripts.org</a> provides
+<a href="https://github.com/vim-scripts">a comprehensive Git mirrors</a> for
+<a href="http://www.vim.org/scripts/index.php">plugins uploaded to www.vim.org</a>.</li>
+<li>Experimental plugins which are not uploaded to <a href="http://www.vim.org">www.vim.org</a>
+are usually found in <a href="https://github.com/">GitHub</a>.</li>
+</ul>
+</li>
+<li>Plugins must follow <a href="http://docs.rubygems.org/read/chapter/7#page26">the versioning pocilies of
+RubyGems</a> and have "version"
+tags in their repositories.  For example, if there is the version 1.2.3 of
+a plugin, its repository must have the tag <code>1.2.3</code>, and the files of the
+version 1.2.3 can be checked out via the tag <code>1.2.3</code>.  In other words,
+plugins which do not have proper tags are not installabe.
+This is an intentional design.  Because:
+
+<ul>
+<li>It's not possible to determine whether two versions are compatible or not
+without "version" tags.  Compatibility is a big problem to resolve
+dependencies of plugins.  For example, if plugin A requires plugin X 1.2.3
+or later while plugin B requires plugin X 2.0 or later, it's not possible
+to use A and B at the same time.  Such problems should be detected before
+installing plugins.</li>
+<li>Git mirrors by vim-scripts.org are tagged with version numbers.</li>
+<li>Some Git repositories might not have "version" tags.
+Such plugins are not ready to use for everyone.
+So that it should not be installable.</li>
+</ul>
+</li>
+<li>Plugins must have proper directory structures.
+For example, directories such as <code>autoload</code>, <code>syntax</code> etc should exist in
+the roots of plugins.
+This is an intentional design.  Because:
+
+<ul>
+<li>Git mirrors by vim-scripts.org have proper directory structures even if
+the original plugins are uploaded to <a href="http://www.vim.org">www.vim.org</a> without proper directory
+structures.  (A good example is
+<a href="http://www.vim.org/scripts/script.php?script_id=31">a.vim</a> and
+<a href="https://github.com/vim-scripts/a.vim">its mirror</a>.)</li>
+<li>Other Git repositoris might not have proper directory structures.
+Such plugins are not ready to use for everyone.
+So that it should not be installable.</li>
+</ul>
+</li>
+</ul><h2>Typical usage</h2>
+
+<h3>Start using vim-flavor</h3>
+
+<pre><code>cd $YOUR_REPOSITORY_FOR_DOTFILES
+
+cat &gt;VimFlavor &lt;&lt;'END'
+  # * Declare using git://github.com/kana/vim-textobj-indent.git
+  # * vim-flavor fetches git://github.com/$USER/$REPO.git
+  #   if the argument is written in '$USER/$REPO' format.
+  # * kana/vim-textobj-indent requires kana/vim-textobj-user.
+  #   Such dependencies are automatically installed
+  #   if the flavored plugin declares its dependencies with VimFlavor file.
+  #   (FIXME: Resolving dependencies will be implemented later.)
+  flavor 'kana/vim-textobj-indent'
+
+  # * Declare using git://github.com/vim-scripts/fakeclip.git
+  # * vim-flavor fetches git://github.com/vim-scripts/$REPO.git
+  #   if the argument is written in '$REPO' format.
+  flavor 'fakeclip'
+
+  # * Declare using git://github.com/kana/vim-altr.git
+  # * vim-flavor fetches the URI
+  #   if the argument seems to be a URI.
+  flavor 'git://github.com/kana/vim-altr.git'
+
+  # * Declare using kana/vim-smartchr 0.1.0 or later and older than 0.2.0.
+  flavor 'kana/vim-smartchr', '~&gt; 0.1.0'
+
+  # * Declare using kana/vim-smartword 0.1 or later and older than 1.0.
+  flavor 'kana/vim-smartword', '~&gt; 0.1'
+
+  # * Declare using kana/vim-smarttill 0.1.0 or later.
+  flavor 'kana/vim-smarttill', '&gt;= 0.1.0'
+END
+
+# Fetch the plugins declared in the VimFlavor,
+# create VimFlavor.lock for a snapshot of all plugins and versions,
+# then install the plugins and a bootstrap script into ~/.vim etc.
+vim-flavor install
+
+# Add the following line into the first line of your vimrc:
+#
+#   runtime flavors/bootstrap.vim
+vim vimrc
+
+git add VimFlavor VimFlavor.lock vimrc
+git commit -m 'Use vim-flavor to manage my favorite Vim plugins'
+</code></pre>
+
+<h3>Upgrade all plugins to the latest version</h3>
+
+<pre><code>vim-flavor upgrade
+
+git add VimFlavor.lock
+git commit -m 'Upgrade my favorite Vim plugins'
+</code></pre>
+
+<h3>Add more plugins into your dotfile repository</h3>
+
+<pre><code>cat &gt;&gt;VimFlavor &lt;&lt;'END'
+
+  flavor 'kana/vim-operator-replace'
+
+END
+
+# Fetch newly added plugins,
+# update VimFlavor.lock for the plugins,
+# then install the plugins into ~/.vim etc.
+vim-flavor install
+
+git add VimFlavor VimFlavor.lock
+git commit -m 'Use kana/vim-operator-replace'
+</code></pre>
+
+<h3>Remove plugins from your dotfile repository</h3>
+
+<pre><code># Remove declarations of unused plugins from VimFlavor.
+sed -i~ -e '/vim-smartchr/d' VimFlavor
+
+# Update VimFlavor.lock for the removed plugins,
+# then clean up the plugins from ~/.vim etc.
+vim-flavor install
+
+git add VimFlavor VimFlavor.lock
+git commit -m 'Farewell kana/vim-smartchr'
+</code></pre>
+
+<h3>Install plugins into a non-standard directory</h3>
+
+<pre><code>vim-flavor install --vimfiles-path=/cygdrive/c/Users/kana/vimfiles
+</code></pre>
+
+<h3>Farewell to vim-flavor</h3>
+
+<pre><code>rm -r ~/.vim-flavor
+rm -r ~/.vim/flavors  # or ~/vimfiles/flavors etc.
+
+cd $YOUR_REPOSITORY_FOR_DOTFILES
+rm VimFlavor VimFlavor.lock
+git commit -am 'Farewell to vim-flavor'
+</code></pre>
+
+<h2>Philosophy</h2>
+
+<p>I know that there are several implementations for the same purpose and many
+users love them, but all of them do not meet my taste.  That's why I wrote
+vim-flavor.  The philosofy on vim-flavor is as follows:</p>
+
+<p>Whole configuration including <em>versions of plugins</em> should be under a version
+control system.  All of existing implementations do not manage versions of
+plugins.  This means that <em>it's not possible to use the same configuration
+across multiple environments</em> (the only one exception is using
+<a href="https://github.com/tpope/vim-pathogen">pathogen</a> with Git submodules,
+but you'll find it's painful to manually manage many plugins).</p>
+
+<p>There should be a standard way to describe proper dependencies of plugins to
+install dependencies without explicit declarations.  Most of existing
+implementations do not resolve dependencies automatically (the only one
+exception is
+<a href="https://github.com/MarcWeber/vim-addon-manager">vim-addon-manager</a>, but it
+doesn't take care about required versions).  The configuration file formats of
+vim-flavor are also used to describe dependencies of plugins with required
+versions.  This means that vim-flavor installs plugins and their dependencies
+automatically (unfortunately this feature is not implemented yet, but it'll be
+available soon).</p>
+
+<p>Any software should have enough and reproducable test cases.
+But existing implementations such as
+<a href="https://github.com/gmarik/vundle">vundle</a> and
+<a href="https://github.com/Shougo/neobundle.vim">neobundle</a> are not developed so.
+It's horrible for me.</p>
+
+<p>Installation steps should be small, be reproducable, and not affect existing
+envinronment as less as possible.  Most of existing implementations require to
+manually tweak <code>~/.vim</code> etc.  It's painful to set up such stuffs manually
+because a vimfiles path is varied on each platform.</p>
+
+<p>Finally, a tool and files deployed by the tool should be uninstalled easily.
+<a href="https://github.com/c9s/Vimana">Vimana</a> does not meet this because it directly
+puts files into <code>~/.vim/colors</code> etc and it doesn't provide <code>uninstall</code>
+command.</p>
+
+<h2>License</h2>
+
+<p>vim-flavor is released under the terms of so-called MIT/X license.
+See the LICENSE file for the details.</p>
+
+<h2>Author</h2>
+
+<ul>
+<li>
+<a href="http://whileimautomaton.net/">Kana Natsuno</a>
+(also known as <a href="http://twitter.com/kana1">@kana1</a>)</li>
+</ul>
+      </section>
+
+    </div>
+    <!--[if !IE]><script>fixScale(document);</script><!--<![endif]-->
+  </body>
+</html>
