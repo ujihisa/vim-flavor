@@ -29,28 +29,6 @@ module Vim
         @lockfile.load() if File.exists?(@lockfile_path)
       end
 
-      def make_new_flavors(current_flavors, locked_flavors, mode)
-        new_flavors = {}
-
-        current_flavors.each do |repo_uri, cf|
-          lf = locked_flavors[repo_uri]
-          nf = cf.dup()
-
-          nf.locked_version =
-            if (not lf) or
-              cf.version_contraint != lf.version_contraint or
-              mode == :update then
-              cf.locked_version
-            else
-              lf.locked_version
-            end
-
-          new_flavors[repo_uri] = nf
-        end
-
-        new_flavors
-      end
-
       def create_vim_script_for_bootstrap(vimfiles_path)
         bootstrap_path = "#{vimfiles_path.to_flavors_path()}/bootstrap.vim"
         FileUtils.mkdir_p(File.dirname(bootstrap_path))
